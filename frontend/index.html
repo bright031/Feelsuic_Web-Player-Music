@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="logo.png">
+    <title>Feelusic - Web Player Music</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gidole&family=Noto+Serif+Hentaigana:wght@200..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,1,0" />
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <a href="/">
+                <img src="public/logo.png" alt="" id="logo-alt" />
+            </a>
+        </div>
+        <div class="nav-links" style="margin-left: 850px;">
+            <a href="/" id="nav-home"></a>
+            <a href="/aboutus" id="nav-about"></a>
+        </div>
+        <div class="language-switcher">
+            <div class="language-btn" onclick="toggleLanguage()" style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                <i class="fa fa-globe" style="font-size: 18px; color: white;"></i>
+                <span id="current-lang" style="font-size: 16px; color: white;">Tiếng Việt</span>
+            </div>
+        </div>
+        <!-- Nút tài khoản -->
+        <div id="account-button" style="display: flex; align-items: center; cursor: pointer; color: white;">
+            <i class="fa fa-user" style="font-size: 18px; margin-right: 6px;"></i>
+            <span id="username-display" style="font-size: 16px;"></span>
+        </div>
+        <!-- Dropdown menu -->
+        <div id="dropdown-menu" style="
+            display: none;
+            position: fixed;
+            top: 60px;
+            right: 20px;
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            min-width: 150px;
+            z-index: 100000;
+            padding: 5px 0;
+        ">
+            <a href="/profile" id="dropdown-profile"
+                style="display: block; padding: 10px 15px; color: white; text-decoration: none; font-size: 14px;"
+                onmouseover="this.style.backgroundColor='rgba(255,255,255,0.2)'"
+                onmouseout="this.style.backgroundColor='transparent'"></a>
+            <a href="/helper" id="dropdown-support"
+                style="display: block; padding: 10px 15px; color: white; text-decoration: none; font-size: 14px;"
+                onmouseover="this.style.backgroundColor='rgba(255,255,255,0.2)'"
+                onmouseout="this.style.backgroundColor='transparent'"></a>
+            <a href="/aboutus" id="dropdown-about"
+                style="display: block; padding: 10px 15px; color: white; text-decoration: none; font-size: 14px;"
+                onmouseover="this.style.backgroundColor='rgba(255,255,255,0.2)'"
+                onmouseout="this.style.backgroundColor='transparent'"></a>
+            <a href="#" id="dropdown-logout" onclick="handleLogout()"
+                style="display: block; padding: 10px 15px; color: white; text-decoration: none; font-size: 14px;"
+                onmouseover="this.style.backgroundColor='rgba(255,255,255,0.2)'"
+                onmouseout="this.style.backgroundColor='transparent'"></a>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <div id="root"></div>
+    </main>
+
+    <script type="module" src="/src/translations.js"></script>
+    <script type="module" src="/src/main.jsx"></script>
+
+    <script>
+        // Hàm khởi tạo ngôn ngữ
+        function initLanguage() {
+            let language = localStorage.getItem('language') || 'vi';
+            if (!['vi', 'en'].includes(language)) {
+                console.warn('Invalid language:', language, 'Falling back to vi');
+                language = 'vi';
+                localStorage.setItem('language', 'vi');
+            }
+            console.log('Initializing language:', language);
+            document.documentElement.lang = language;
+
+            const maxRetries = 10;
+            let retries = 0;
+
+            function tryInit() {
+                if (window.translations && window.translations[language]) {
+                    console.log('Translations loaded:', window.translations[language]);
+                    document.getElementById('logo-alt').alt = window.translations[language].logo_alt;
+                    document.getElementById('nav-home').textContent = window.translations[language].home;
+                    document.getElementById('nav-about').textContent = window.translations[language].about;
+                    document.getElementById('current-lang').textContent = window.translations[language][`language_${language}`] || 'Tiếng Việt';
+                    document.getElementById('username-display').textContent = localStorage.getItem('username') || window.translations[language].account;
+                    document.getElementById('dropdown-profile').textContent = window.translations[language].profile;
+                    document.getElementById('dropdown-support').textContent = window.translations[language].support;
+                    document.getElementById('dropdown-about').textContent = window.translations[language].about;
+                    document.getElementById('dropdown-logout').textContent = window.translations[language].logout;
+                } else {
+                    retries++;
+                    if (retries < maxRetries) {
+                        console.warn(`Translations not ready, retrying (${retries}/${maxRetries})`);
+                        setTimeout(tryInit, 100);
+                    } else {
+                        console.error('Translations not found, using fallback');
+                        document.getElementById('logo-alt').alt = 'Logo Feelusic';
+                        document.getElementById('nav-home').textContent = 'Trang chủ';
+                        document.getElementById('nav-about').textContent = 'Giới thiệu';
+                        document.getElementById('current-lang').textContent = 'Tiếng Việt';
+                        document.getElementById('username-display').textContent = localStorage.getItem('username') || 'Tài khoản';
+                        document.getElementById('dropdown-profile').textContent = 'Hồ sơ';
+                        document.getElementById('dropdown-support').textContent = 'Hỗ trợ';
+                        document.getElementById('dropdown-about').textContent = 'Giới thiệu';
+                        document.getElementById('dropdown-logout').textContent = 'Đăng xuất';
+                    }
+                }
+            }
+
+            tryInit();
+        }
+
+        // Hàm toggle ngôn ngữ
+        function toggleLanguage() {
+            const currentLang = localStorage.getItem('language') || 'vi';
+            const newLang = currentLang === 'vi' ? 'en' : 'vi';
+            console.log('Toggling language to:', newLang);
+            localStorage.setItem('language', newLang);
+            window.location.reload();
+        }
+
+        // Hàm xử lý đăng xuất
+        function handleLogout() {
+            console.log('Đã logout');
+            localStorage.removeItem('userId');
+            localStorage.removeItem('username');
+            window.location.href = '/login';
+        }
+
+        // Xử lý dropdown tài khoản
+        const accountButton = document.getElementById('account-button');
+        const dropdownMenu = document.getElementById('dropdown-menu');
+
+        accountButton.addEventListener('click', () => {
+            const isVisible = dropdownMenu.style.display === 'block';
+            dropdownMenu.style.display = isVisible ? 'none' : 'block';
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!accountButton.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                dropdownMenu.style.display = 'none';
+            }
+        });
+
+        // Gọi initLanguage khi trang tải
+        document.addEventListener('DOMContentLoaded', initLanguage);
+    </script>
+</body>
+</html>
