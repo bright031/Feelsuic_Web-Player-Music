@@ -21,4 +21,4 @@ ENV DJANGO_SETTINGS_MODULE=feelusic.settings
 EXPOSE 8000
 
 # Chạy Gunicorn
-CMD ["gunicorn", "feelusic.wsgi:application", "--chdir", "backend", "--bind", "0.0.0.0:8000"]
+CMD gunicorn backend.feelusic.wsgi:application --chdir backend --bind 0.0.0.0:$PORT
