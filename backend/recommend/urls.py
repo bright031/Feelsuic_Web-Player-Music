@@ -25,7 +25,8 @@ path('api/search', views.search, name='search'),
     path('api/music-history/<str:user_id>', views.get_historysongs, name='get_historysongs'),
     path('api/login-history/<str:user_id>', views.get_login_history, name='get_login_history'),
     
-    
+    path('', views.index, name='index'),  
+    path('recommend/', views.recommend, name='recommend'),
     path('api/myplaylist/<str:user_id>', views.get_my_playlist, name='get_my_playlist'),
     path('api/create-new-playlist/<str:user_id>', views.create_new_playlist, name='create_new_playlist'),
     path('api/add-to-playlist/<str:user_id>', views.add_to_playlist, name='add_to_playlist'),
