@@ -26,13 +26,14 @@ function Signup() {
       return;
     }
     try {
-      console.log('Sending signup request:', { username, email, password, phone });
-      const response = await axios.post('http://127.0.0.1:8001/api/register', {
-        username,
-        password,
-        email,
-        phone,
-      });
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8001'; // Fallback cho local
+    console.log('Sending signup request:', { username, email, password, phone });
+    const response = await axios.post(`${apiUrl}/api/register`, {
+      username,
+      password,
+      email,
+      phone,
+    });
       console.log('Signup response:', response.data);
       const { userId, username: responseUsername } = response.data;
       if (!userId || userId === 'null' || userId === 'undefined') {

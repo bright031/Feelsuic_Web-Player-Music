@@ -21,11 +21,12 @@ function Login({ setIsLoggedIn, setUsername }) {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      console.log('Login: Sending login request:', { username: localUsername, password });
-      const response = await axios.post('http://127.0.0.1:8001/api/login', {
-        username: localUsername,
-        password,
-      });
+          const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8001'; // Fallback cho local
+    console.log('Login: Sending login request:', { username: localUsername, password });
+    const response = await axios.post(`${apiUrl}/api/login`, {
+      username: localUsername,
+      password,
+    });
       console.log('Login: Response:', response.data);
       const { userId, username: responseUsername } = response.data;
       if (!userId || userId === 'null' || userId === 'undefined') {
