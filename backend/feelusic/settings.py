@@ -40,7 +40,7 @@ MIDDLEWARE = [
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
     # ⚠️ nhớ sửa domain này đúng với domain thật trên Vercel
-    "https://feelsuic-web-player-music-p3r1-8vz8t8e13-bright1710s-projects.vercel.app",
+    "https://feelsuic-web-player-music-p3r1-6sjlfhvlg-bright1710s-projects.vercel.app",
     "http://localhost:3000",
     "http://feelsuic-web-player-music-p3r1.vercel.app",  
 ]
