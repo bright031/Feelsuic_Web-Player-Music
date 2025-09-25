@@ -2,6 +2,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import mongoengine
 
 load_dotenv()
 
@@ -23,9 +24,8 @@ INSTALLED_APPS = [
     "corsheaders",
 ]
 
-# Đảm bảo CorsMiddleware ở đầu
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",  # Phải ở đầu
+    "corsheaders.middleware.CorsMiddleware",  # phải ở đầu
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -36,12 +36,15 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-# CORS settings
-CORS_ALLOW_ALL_ORIGINS = False  # Tắt allow all để cụ thể hơn
+# ---------------- CORS settings ----------------
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
-    "https://feelsuic-web-player-music-p3r1-pbv5y0liw-bright1710s-projects.vercel.app",
+    # ⚠️ nhớ sửa domain này đúng với domain thật trên Vercel
+    "https://feelsuic-web-player-music-p3r1-8vz8t8e13-bright1710s-projects.vercel.app",
     "http://localhost:3000",
+    "http://feelsuic-web-player-music-p3r1.vercel.app",  
 ]
+
 CORS_ALLOW_METHODS = [
     "GET",
     "POST",
@@ -49,11 +52,21 @@ CORS_ALLOW_METHODS = [
     "DELETE",
     "OPTIONS",
 ]
+
 CORS_ALLOW_HEADERS = [
-    "content-type",
+    "accept",
+    "accept-encoding",
     "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
 ]
+
 CORS_ALLOW_CREDENTIALS = True
+# ------------------------------------------------
 
 ROOT_URLCONF = "feelusic.urls"
 
@@ -73,14 +86,15 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "feelusic.wsgi.application"
-import mongoengine
-# MongoDB Atlas
-MONGO_URI = os.environ.get("MONGO_URI")
+
+# ---------------- MongoDB Atlas ----------------
+MONGODB_URI = os.environ.get("MONGODB_URI")
 mongoengine.connect(
     db="feelusic_db",
-    host=MONGO_URI,
+    host=MONGODB_URI,
     alias="default"
 )
+# ------------------------------------------------
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
