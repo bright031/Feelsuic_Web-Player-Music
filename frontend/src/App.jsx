@@ -12,14 +12,13 @@ import ProfilePage from './components/ProfilePage.jsx';
 import Login from './components/Login.jsx';
 import Signup from './components/Signup.jsx';
 import Helper from './components/Helper.jsx';
-
 import '~/style.css';
 
 function App() {
   const webcamRef = useRef(null);
   const audioRef = useRef(null);
   const navigate = useNavigate();
-  const [selectedGenre, setSelectedGenre] = useState(null)
+  const [selectedGenre, setSelectedGenre] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [emotion, setEmotion] = useState('');
@@ -49,7 +48,7 @@ function App() {
   const [showAllArtists, setShowAllArtists] = useState(false);
   const [selectedArtist, setSelectedArtist] = useState(null);
 
-  console.log('App: setIsLoggedIn type:', typeof setIsLoggedIn); // Debug log
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8001'; // Dùng biến môi trường
 
   const checkLogin = () => {
     return isLoggedIn;
@@ -66,15 +65,15 @@ function App() {
       const songData = {
         title: song.title || 'Unknown Title',
         artist: song.artist || 'Unknown Artist',
-        file_path: song.file_path?.startsWith('/') ? song.file_path : `/${song.file_path}`,
+        file_path: song.file_path?.startsWith('/') ? song.file_path : `/${song.file_path || ''}`,
         cover: song.cover || '/public/default_cover.png',
       };
 
       console.log('App: Sending add_historysong request:', songData, 'userId:', userId);
-      await axios.post(`http://127.0.0.1:8001/api/historysong/add/${userId}`, songData);
+      await axios.post(`${apiUrl}/api/historysong/add/${userId}`, songData);
       console.log('App: Added song to history:', songData.title);
 
-      const historySongResponse = await axios.get(`http://127.0.0.1:8001/api/historysong/${userId}`);
+      const historySongResponse = await axios.get(`${apiUrl}/api/historysong/${userId}`);
       setRecentSongs(
         historySongResponse.data.data?.songs.sort((a, b) => new Date(b.listenedAt) - new Date(a.listenedAt)) || []
       );
@@ -87,16 +86,16 @@ function App() {
           songs: (selectedAlbum.songs || []).map(s => ({
             title: s.title || 'Unknown',
             artist: s.artist || 'Unknown',
-            src: s.src || (s.file_path?.startsWith('/') ? s.file_path : '/' + (s.file_path || '')),
+            src: s.src || (s.file_path?.startsWith('/') ? s.file_path : `/${s.file_path || ''}`),
             cover: s.cover || '/public/default_cover.png',
           })),
         };
 
         console.log('App: Sending add_historylist request:', listData);
-        await axios.post(`http://127.0.0.1:8001/api/historylist/add/${userId}`, listData);
+        await axios.post(`${apiUrl}/api/historylist/add/${userId}`, listData);
         console.log('App: Added list to history:', listData.title);
 
-        const historyListResponse = await axios.get(`http://127.0.0.1:8001/api/historylist/${userId}`);
+        const historyListResponse = await axios.get(`${apiUrl}/api/historylist/${userId}`);
         setRecentLists(
           historyListResponse.data.data?.lists.sort((a, b) => new Date(b.listenedAt) - new Date(a.listenedAt)) || []
         );
@@ -128,7 +127,7 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const listsResponse = await axios.get('http://127.0.0.1:8001/api/list');
+        const listsResponse = await axios.get(`${apiUrl}/api/list`);
         const fetchedLists = listsResponse.data.data;
         const shuffled = [...fetchedLists].sort(() => 0.5 - Math.random());
         setList(shuffled);
@@ -139,7 +138,7 @@ function App() {
       }
     };
     fetchData();
-  }, []);
+  }, [apiUrl]);
 
   useEffect(() => {
     const userId = localStorage.getItem('userId');
@@ -158,8 +157,8 @@ function App() {
     const fetchData = async () => {
       try {
         console.log('App: Fetching history with userId:', userId);
-        const historyListResponse = await axios.get(`http://127.0.0.1:8001/api/historylist/${userId}`);
-        const historySongResponse = await axios.get(`http://127.0.0.1:8001/api/historysong/${userId}`);
+        const historyListResponse = await axios.get(`${apiUrl}/api/historylist/${userId}`);
+        const historySongResponse = await axios.get(`${apiUrl}/api/historysong/${userId}`);
 
         const fetchedRecentLists = historyListResponse.data.data?.lists || [];
         const fetchedRecentSongs = historySongResponse.data.data?.songs || [];
@@ -177,12 +176,12 @@ function App() {
     };
 
     fetchData();
-  }, [navigate]);
+  }, [navigate, apiUrl]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const albumsResponse = await axios.get('http://127.0.0.1:8001/api/albums');
+        const albumsResponse = await axios.get(`${apiUrl}/api/albums`);
         const fetchedAlbums = albumsResponse.data.data;
         const shuffled = [...fetchedAlbums].sort(() => 0.5 - Math.random());
         setAlbums(shuffled);
@@ -222,9 +221,10 @@ function App() {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
     }
-  }, [currentSongIndex, playlist, isAudioMuted]);
-useEffect(() => {
-    console.log('App: useEffect isLoggedIn triggered');
+  }, [currentSongIndex, playlist, isAudioMuted, apiUrl]);
+
+  useEffect(() => {
+    console.log('App: isLoggedIn updated to:', isLoggedIn);
     const userId = localStorage.getItem('userId');
     const username = localStorage.getItem('username');
     if (userId && username) {
@@ -235,10 +235,11 @@ useEffect(() => {
       setUsername('');
     }
   }, []);
+
   useEffect(() => {
     const fetchTopArtists = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8001/api/artists');
+        const response = await axios.get(`${apiUrl}/api/artists`);
         const fetchedArtists = response.data.data || [];
         const shuffledArtists = shuffleArray(fetchedArtists);
         setTopArtists(shuffledArtists);
@@ -249,7 +250,7 @@ useEffect(() => {
       }
     };
     fetchTopArtists();
-  }, []);
+  }, [apiUrl]);
 
   const mapEmotionToVietnamese = (emotion) => {
     const emotionMap = {
@@ -277,7 +278,7 @@ useEffect(() => {
         formData.append('image', blob, 'webcam.jpg');
         try {
           console.log('App: Sending predict-emotion request for userId:', userId);
-          const response = await axios.post('http://127.0.0.1:8001/api/predict-emotion', formData, {
+          const response = await axios.post(`${apiUrl}/api/predict-emotion`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
           });
           setEmotion(response.data.emotion);
@@ -318,7 +319,7 @@ useEffect(() => {
     }
   };
 
-const loadSection = useCallback(
+  const loadSection = useCallback(
     (name) => {
       console.log('App: loadSection called with name:', name);
       const album = albums.find((album) => album.title === name);
@@ -349,30 +350,17 @@ const loadSection = useCallback(
         setAlbums((prevAlbums) => shuffleArray(prevAlbums));
         setList((prevList) => shuffleArray(prevList));
         console.log('App: Đã trở về trang chủ với albums, danh sách và nghệ sĩ được xáo trộn');
-        // Ghi chú: Không reset selectedGenre ở đây để giữ thể loại đã chọn
-        // setSelectedGenre(null); // Chỉ reset nếu thực sự cần khi về trang chủ
       } else {
         console.log(`App: Không tìm thấy album/danh sách phát: ${name}`);
       }
     },
-    [albums, list, navigate]
+    [albums, list, navigate, apiUrl]
   );
-  
-useEffect(() => {
-    console.log('App: selectedGenre updated to:', selectedGenre);
-  }, [selectedGenre]);
 
-  // Ghi chú: Debug trước khi render HomeSection để xác nhận prop
-  useEffect(() => {
-    console.log('App: Chuẩn bị render HomeSection với selectedGenre:', selectedGenre);
-  }, [selectedGenre]);
-  console.log('App: Rendering, isLoggedIn:', isLoggedIn, 'username:', username);
-useEffect(() => {
-  console.log('App: selectedGenre updated to:', selectedGenre);
-}, [selectedGenre]);
   return (
     <Routes>
-      <Route path="*"
+      <Route
+        path="*"
         element={
           <>
             <Header
@@ -385,38 +373,37 @@ useEffect(() => {
               setUsername={setUsername}
               navigate={navigate}
               loadSection={loadSection}
-              setSelectedGenre={setSelectedGenre} selectedGenre={selectedGenre}
+              setSelectedGenre={setSelectedGenre}
+              selectedGenre={selectedGenre}
               setSelectedArtist={setSelectedArtist}
-               currentSong={currentSong}
-    audioRef={audioRef}
-    isAudioMuted={false}
-    playlist={playlist}
-    currentSongIndex={currentSongIndex}
-    setCurrentSongIndex={setCurrentSongIndex}
-    setCurrentSong={setCurrentSong}
-    addSongToHistory={addSongToHistory}
-    togglePlay={togglePlay}
-    prevSong={prevSong}
-    nextSong={nextSong}
-    shuffleSong={shuffleSong}
+              currentSong={currentSong}
+              audioRef={audioRef}
+              isAudioMuted={false}
+              playlist={playlist}
+              currentSongIndex={currentSongIndex}
+              setCurrentSongIndex={setCurrentSongIndex}
+              setCurrentSong={setCurrentSong}
+              addSongToHistory={addSongToHistory}
+              togglePlay={togglePlay}
+              prevSong={prevSong}
+              nextSong={nextSong}
+              shuffleSong={shuffleSong}
             />
             <main style={{ display: 'flex', flexDirection: 'row', alignItems: 'stretch', minHeight: 'calc(100vh - 60px)', marginTop: '20px' }}>
               <SidebarLeft
-   webcamRef={webcamRef}
-  isWebcamEnabled={isWebcamEnabled}
-  toggleWebcam={toggleWebcam}
-  capture={capture}
-  result={result}
-  checkLogin={checkLogin}
-  setPlaylist={setPlaylist}
-  setCurrentSongIndex={setCurrentSongIndex}
-  setCurrentSong={setCurrentSong}
-  addSongToHistory={addSongToHistory}
- 
+                webcamRef={webcamRef}
+                isWebcamEnabled={isWebcamEnabled}
+                toggleWebcam={toggleWebcam}
+                capture={capture}
+                result={result}
+                checkLogin={checkLogin}
+                setPlaylist={setPlaylist}
+                setCurrentSongIndex={setCurrentSongIndex}
+                setCurrentSong={setCurrentSong}
+                addSongToHistory={addSongToHistory}
               />
-              
               <HomeSection
-              selectedGenre={selectedGenre}
+                selectedGenre={selectedGenre}
                 setSelectedGenre={setSelectedGenre}
                 selectedAlbum={selectedAlbum}
                 isWebcamEnabled={isWebcamEnabled}
@@ -451,27 +438,27 @@ useEffect(() => {
                 setShowAllRecentSongs={setShowAllRecentSongs}
                 checkLogin={checkLogin}
                 searchResults={searchResults}
-                 currentSong={currentSong}
-    currentSongIndex={currentSongIndex}
-    togglePlay={togglePlay}
-    prevSong={prevSong}
-    nextSong={nextSong}
-    shuffleSong={shuffleSong}
+                currentSong={currentSong}
+                currentSongIndex={currentSongIndex}
+                togglePlay={togglePlay}
+                prevSong={prevSong}
+                nextSong={nextSong}
+                shuffleSong={shuffleSong}
               />
               <MusicPlayer
-               currentSong={currentSong}
-    audioRef={audioRef}
-    isAudioMuted={false}
-    playlist={playlist}
-    currentSongIndex={currentSongIndex}
-    setCurrentSongIndex={setCurrentSongIndex}
-    setCurrentSong={setCurrentSong}
-    addSongToHistory={addSongToHistory}
-    togglePlay={togglePlay}
-    prevSong={prevSong}
-    nextSong={nextSong}
-    shuffleSong={shuffleSong}
-    isLoggedIn={isLoggedIn}
+                currentSong={currentSong}
+                audioRef={audioRef}
+                isAudioMuted={false}
+                playlist={playlist}
+                currentSongIndex={currentSongIndex}
+                setCurrentSongIndex={setCurrentSongIndex}
+                setCurrentSong={setCurrentSong}
+                addSongToHistory={addSongToHistory}
+                togglePlay={togglePlay}
+                prevSong={prevSong}
+                nextSong={nextSong}
+                shuffleSong={shuffleSong}
+                isLoggedIn={isLoggedIn}
               />
             </main>
             <Footer />
@@ -488,10 +475,10 @@ useEffect(() => {
           )
         }
       />
-      <Route path="helper" element={<Helper />} />
-      <Route path="aboutus" element={<AboutUs />} />
-      <Route path="login" element={<Login setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} />} />
-      <Route path="signup" element={<Signup />} />
+      <Route path="/helper" element={<Helper />} />
+      <Route path="/aboutus" element={<AboutUs />} />
+      <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} />} />
+      <Route path="/signup" element={<Signup />} />
     </Routes>
   );
 }
