@@ -37,7 +37,7 @@ MIDDLEWARE = [
 ]
 
 # ---------------- CORS settings ----------------
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     # ⚠️ nhớ sửa domain này đúng với domain thật trên Vercel
     "https://feelsuic-web-player-music-p3r1.vercel.app",  # domain chính thức Vercel
