@@ -58,7 +58,7 @@ const ProfilePage = ({ isLoggedIn = false, setIsLoggedIn = () => {}, setUsername
     }
     try {
       const response = await axios.get(`http://127.0.0.1:8001/api/login-history/${userId}`);
-      setLoginHistory(response.data.data || []);
+      setLoginHistory(response.data.logins || []);
     } catch (err) {
       setError(err.response?.data?.error || translations[language].fetch_login_history_error);
     }

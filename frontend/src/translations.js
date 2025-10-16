@@ -36,7 +36,6 @@ export const translations = {
     safety_center: 'Trung tâm an toàn và bảo mật',
     terms_of_use: 'Điều khoản sử dụng',
     legal: 'Pháp lý',
-   
     copyright: '© 2025 Feelusic - Web Player Music. Tất cả quyền được bảo lưu.',
 
     // Helper
@@ -60,8 +59,9 @@ export const translations = {
     privacy_settings_content: 'Thiết lập quyền riêng tư cho tài khoản nghe nhạc.',
     device_troubleshooting: 'Thiết bị và khắc phục sự cố',
     device_troubleshooting_content: 'Hỗ trợ về thiết bị, đăng nhập, lỗi kết nối hoặc phát nhạc.',
-      // HomeSection
-genre: 'Thể loại',
+
+    // HomeSection
+    genre: 'Thể loại',
     loading: 'Đang tải...',
     no_songs_genre: 'Không tìm thấy bài hát cho thể loại {genre}',
     search_results: 'Kết quả tìm kiếm',
@@ -82,22 +82,32 @@ genre: 'Thể loại',
     recent_songs: 'Bài hát gần đây',
     no_recent_songs: 'Không có bài hát gần đây',
     error_genre: 'Không thể tải bài hát theo thể loại',
+
     // Login
     login_title: 'Đăng nhập',
     username_placeholder: 'Tên đăng nhập',
     password_placeholder: 'Mật khẩu',
     login_button: 'Đăng nhập',
     signup_link: 'Chưa có tài khoản? <a href="/signup" style={{ color: \'white\', textDecoration: \'none\' }}>Đăng ký</a>',
-  forgot_password: ' <a href="/forgot-password" style="color: white; text-decoration: none;">Quên mật khẩu?</a>',
+    forgot_password: 'Quên mật khẩu?',
     login_success: 'Đăng nhập thành công!',
     login_failed: 'Đăng nhập thất bại: ',
- 
+    forgot_password_title: 'Yêu cầu đặt lại mật khẩu',
+    email_placeholder: 'Nhập email của bạn',
+    forgot_password_button: 'Gửi mã OTP',
+    forgot_password_success: 'Mã OTP đã được gửi (kiểm tra console)!',
+    forgot_password_failed: 'Lỗi: ',
+    verify_otp_title: 'Xác thực mã OTP',
+    otp_placeholder: 'Nhập mã OTP',
+    new_password_placeholder: 'Nhập mật khẩu mới',
+    verify_otp_button: 'Xác thực và đặt lại mật khẩu',
+    reset_password_success: 'Đặt lại mật khẩu thành công!',
+    reset_password_failed: 'Lỗi khi đặt lại mật khẩu: ',
+
     // Signup
     signup_title: 'Đăng ký',
-
-    email_placeholder: 'Email',
+   
     phone_placeholder: 'Số điện thoại',
-
     confirm_password_placeholder: 'Nhập lại mật khẩu',
     signup_button: 'Đăng ký',
     login_link: 'Đã có tài khoản? <a href="/login" style={{ color: \'white\', textDecoration: \'none\' }}>Đăng nhập</a>',
@@ -112,7 +122,6 @@ genre: 'Thể loại',
     toggle_webcam_off: 'Tắt nó đi',
     webcam_description: 'Khám phá những bài hát thông qua công nghệ nhận diện cảm xúc bằng webcam',
     my_playlists: 'Danh sách phát của tôi',
-
     please_login: 'Vui lòng đăng nhập lại',
     create_playlist: 'Tạo danh sách phát mới',
     max_playlists: 'Tối đa 4 danh sách phát',
@@ -153,7 +162,7 @@ genre: 'Thể loại',
     no_music_history: 'Chưa có lịch sử nghe nhạc',
     change_password_label: 'Thay đổi mật khẩu',
     change_email_label: 'Thay đổi email',
-    new_password_placeholder: 'Nhập mật khẩu mới',
+    
     new_email_placeholder: 'Nhập email mới',
     save_password_button: 'Lưu mật khẩu',
     save_email_button: 'Lưu email',
@@ -197,28 +206,7 @@ genre: 'Thể loại',
     address_content:
       'Can Tho University of Technology<br />256 Nguyen Van Cu, An Hoa, Ninh Kieu, Can Tho<br />Email: <a href="mailto:feelusic.contact@gmail.com" style={{ color: \'black\' }}>dqdong2100424@student.ctuet.edu.vn</a><br />Facebook: <a href="https://www.facebook.com/shars171003/" target="_blank" rel="noopener" style={{ color: \'black\' }}>shars171003</a>',
     back_button: 'Back',
-  // HomeSection
-   genre: 'Genre',
-    loading: 'Loading...',
-    no_songs_genre: 'No songs found for genre {genre}',
-    search_results: 'Search Results',
-    artist: 'Artist',
-    songs_count: '{count} songs',
-    popular_songs: 'Popular Songs',
-    no_songs_artist: 'No songs available for this artist',
-    back: 'Back',
-    playlist: 'Playlist',
-    no_songs_album: 'No songs in this album yet',
-    albums: 'Albums & EPs',
-    view_more: 'View More',
-    collapse: 'Collapse',
-    lists: 'Playlists',
-    top_artists: 'Top Artists',
-    recent_lists: 'Recent Playlists',
-    no_recent_lists: 'No recent playlists',
-    recent_songs: 'Recent Songs',
-    no_recent_songs: 'No recent songs',
-    error_genre: 'Failed to load songs by genre',
+
     // Footer
     partners: 'Music Partners',
     privacy_policy: 'Privacy Policy',
@@ -226,7 +214,6 @@ genre: 'Thể loại',
     safety_center: 'Safety & Privacy Center',
     terms_of_use: 'Terms of Use',
     legal: 'Legal',
-
     copyright: '© 2025 Feelusic - Web Player Music. All rights reserved.',
 
     // Helper
@@ -250,7 +237,29 @@ genre: 'Thể loại',
     privacy_settings_content: 'Set up privacy settings for your music listening account.',
     device_troubleshooting: 'Devices and Troubleshooting',
     device_troubleshooting_content: 'Support for devices, login issues, connection errors, or music playback.',
-   
+
+    // HomeSection
+    genre: 'Genre',
+    loading: 'Loading...',
+    no_songs_genre: 'No songs found for genre {genre}',
+    search_results: 'Search Results',
+    artist: 'Artist',
+    songs_count: '{count} songs',
+    popular_songs: 'Popular Songs',
+    no_songs_artist: 'No songs available for this artist',
+    back: 'Back',
+    playlist: 'Playlist',
+    no_songs_album: 'No songs in this album yet',
+    albums: 'Albums & EPs',
+    view_more: 'View More',
+    collapse: 'Collapse',
+    lists: 'Playlists',
+    top_artists: 'Top Artists',
+    recent_lists: 'Recent Playlists',
+    no_recent_lists: 'No recent playlists',
+    recent_songs: 'Recent Songs',
+    no_recent_songs: 'No recent songs',
+    error_genre: 'Failed to load songs by genre',
 
     // Login
     login_title: 'Login',
@@ -258,16 +267,25 @@ genre: 'Thể loại',
     password_placeholder: 'Password',
     login_button: 'Login',
     signup_link: 'Don’t have an account? <a href="/signup" style={{ color: \'white\', textDecoration: \'none\' }}>Sign Up</a>',
-
+    forgot_password: 'Forgot your password?',
     login_success: 'Login successful!',
     login_failed: 'Login failed: ',
-forgot_password: ' <a href="/forgot-password" style="color: white; text-decoration: none;">Forgot your password?</a>',
+    forgot_password_title: 'Request Password Reset',
+    email_placeholder: 'Enter your email',
+    forgot_password_button: 'Send OTP',
+    forgot_password_success: 'OTP sent (check console)!',
+    forgot_password_failed: 'Failed to send OTP: ',
+    verify_otp_title: 'Verify OTP',
+    otp_placeholder: 'Enter OTP',
+    new_password_placeholder: 'Enter new password',
+    verify_otp_button: 'Verify and Reset Password',
+    reset_password_success: 'Password reset successful!',
+    reset_password_failed: 'Failed to reset password: ',
+
     // Signup
     signup_title: 'Sign Up',
-  
-    email_placeholder: 'Email',
+   
     phone_placeholder: 'Phone Number',
-
     confirm_password_placeholder: 'Confirm Password',
     signup_button: 'Sign Up',
     login_link: 'Already have an account? <a href="/login" style={{ color: \'white\', textDecoration: \'none\' }}>Login</a>',
@@ -282,7 +300,6 @@ forgot_password: ' <a href="/forgot-password" style="color: white; text-decorati
     toggle_webcam_off: 'Turn it off',
     webcam_description: 'Discover songs through emotion detection technology via webcam',
     my_playlists: 'My Playlists',
- 
     please_login: 'Please log in again',
     create_playlist: 'Create New Playlist',
     max_playlists: 'Maximum 4 playlists',
@@ -323,7 +340,7 @@ forgot_password: ' <a href="/forgot-password" style="color: white; text-decorati
     no_music_history: 'No music listening history',
     change_password_label: 'Change Password',
     change_email_label: 'Change Email',
-    new_password_placeholder: 'Enter new password',
+    
     new_email_placeholder: 'Enter new email',
     save_password_button: 'Save Password',
     save_email_button: 'Save Email',
@@ -347,7 +364,6 @@ export let currentLanguage = localStorage.getItem('language') || 'vi';
 export const changeLanguage = (lang) => {
   currentLanguage = lang;
   localStorage.setItem('language', lang);
-
 };
 
 window.translations = translations;

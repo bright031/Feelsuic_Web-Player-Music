@@ -18,15 +18,16 @@ path('api/search', views.search, name='search'),
     path('api/artist-albums/<str:artist_id>/', views.get_artist_albums, name='get_artist_albums'),  # Lấy album của nghệ sĩ
     path('api/artists/create', views.create_update_artist, name='create_update_artist'),  # Tạo/cập nhật nghệ sĩ
     path('api/albums/create', views.create_album, name='create_album'),  # Tạo album
-    path('api/user/<str:user_id>', views.get_user, name='get_user'),
-    path('api/user/<str:user_id>', views.update_user, name='update_user'),
+path('api/user/<str:user_id>', views.get_user, name='get_user'),          # GET
+path('api/user/update/<str:user_id>', views.update_user, name='update_user'),  # PUT
+
     
     path('api/update_user/<str:user_id>', views.update_user, name='update_user'),
     path('api/music-history/<str:user_id>', views.get_historysongs, name='get_historysongs'),
     path('api/login-history/<str:user_id>', views.get_login_history, name='get_login_history'),
+     path('api/forgot-password', views.forgot_password_view, name='forgot_password'),
+    path('api/verify-otp', views.verify_otp_view, name='verify_otp'),
     
-    path('', views.index, name='index'),  
-    path('recommend/', views.recommend, name='recommend'),
     path('api/myplaylist/<str:user_id>', views.get_my_playlist, name='get_my_playlist'),
     path('api/create-new-playlist/<str:user_id>', views.create_new_playlist, name='create_new_playlist'),
     path('api/add-to-playlist/<str:user_id>', views.add_to_playlist, name='add_to_playlist'),

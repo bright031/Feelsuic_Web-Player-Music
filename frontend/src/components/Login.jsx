@@ -7,7 +7,18 @@ function Login({ setIsLoggedIn, setUsername }) {
   const [localUsername, setLocalUsername] = useState('');
   const [password, setPassword] = useState('');
   const [language, setLanguage] = useState(currentLanguage);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [otp, setOtp] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [forgotMessage, setForgotMessage] = useState('');
+  const [showOtpForm, setShowOtpForm] = useState(false);
   const navigate = useNavigate();
+
+  // State cho vị trí của modal
+  const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem('language');
@@ -16,44 +27,103 @@ function Login({ setIsLoggedIn, setUsername }) {
     }
   }, []);
 
-  console.log('Login: setIsLoggedIn type:', typeof setIsLoggedIn, 'value:', setIsLoggedIn);
+  console.log('Đăng nhập: Kiểu setIsLoggedIn:', typeof setIsLoggedIn, 'giá trị:', setIsLoggedIn);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-          const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8001'; // Fallback cho local
-    console.log('Login: Sending login request:', { username: localUsername, password });
-    const response = await axios.post(`${apiUrl}/api/login`, {
-      username: localUsername,
-      password,
-    });
-      console.log('Login: Response:', response.data);
+      console.log('Đăng nhập: Gửi yêu cầu đăng nhập:', { username: localUsername, password });
+      const response = await axios.post('http://127.0.0.1:8001/api/login', {
+        username: localUsername,
+        password,
+      });
+      console.log('Đăng nhập: Phản hồi:', response.data);
       const { userId, username: responseUsername } = response.data;
       if (!userId || userId === 'null' || userId === 'undefined') {
-        throw new Error(`Login: Invalid userId received: ${userId}`);
+        throw new Error(`Đăng nhập: Nhận được userId không hợp lệ: ${userId}`);
       }
       if (!responseUsername) {
-        throw new Error('Login: Username not received in response');
+        throw new Error('Đăng nhập: Không nhận được tên người dùng trong phản hồi');
       }
       localStorage.setItem('userId', userId);
       localStorage.setItem('username', responseUsername);
       if (typeof setIsLoggedIn === 'function') {
         setIsLoggedIn(true);
       } else {
-        console.error('Login: setIsLoggedIn is not a function:', setIsLoggedIn);
+        console.error('Đăng nhập: setIsLoggedIn không phải là hàm:', setIsLoggedIn);
       }
       if (typeof setUsername === 'function') {
         setUsername(responseUsername);
       } else {
-        console.error('Login: setUsername is not a function:', setUsername);
+        console.error('Đăng nhập: setUsername không phải là hàm:', setUsername);
       }
-      console.log('Login: Stored in localStorage:', { userId, username: responseUsername });
+      console.log('Đăng nhập: Đã lưu vào localStorage:', { userId, username: responseUsername });
       alert(translations[language].login_success);
       navigate('/');
     } catch (error) {
-      console.error('Login: Error:', error.response?.data || error.message);
+      console.error('Đăng nhập: Lỗi:', error.response?.data || error.message);
       alert(translations[language].login_failed + (error.response?.data?.message || error.message));
     }
+  };
+
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    try {
+      console.log('Quên mật khẩu: Gửi yêu cầu OTP cho:', { email: forgotEmail });
+      const response = await axios.post('http://127.0.0.1:8001/api/forgot-password', {
+        email: forgotEmail,
+      });
+      console.log('Quên mật khẩu: Phản hồi:', response.data);
+      setForgotMessage(translations[language].forgot_password_success);
+      setShowOtpForm(true);
+    } catch (error) {
+      console.error('Quên mật khẩu: Lỗi:', error.response?.data || error.message);
+      setForgotMessage(translations[language].forgot_password_failed + (error.response?.data?.message || error.message));
+    }
+  };
+
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    try {
+      console.log('Xác thực OTP:', { email: forgotEmail, otp, newPassword });
+      const response = await axios.post('http://127.0.0.1:8001/api/verify-otp', {
+        email: forgotEmail,
+        otp,
+        newPassword,
+      });
+      console.log('Xác thực OTP: Phản hồi:', response.data);
+      setForgotMessage(translations[language].reset_password_success);
+      setTimeout(() => {
+        setShowForgotPassword(false);
+        setShowOtpForm(false);
+        setForgotEmail('');
+        setOtp('');
+        setNewPassword('');
+        setForgotMessage('');
+      }, 3000);
+    } catch (error) {
+      console.error('Xác thực OTP: Lỗi:', error.response?.data || error.message);
+      setForgotMessage(translations[language].reset_password_failed + (error.response?.data?.message || error.message));
+    }
+  };
+
+  // Xử lý kéo thả modal
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setDragStart({ x: e.clientX - modalPosition.x, y: e.clientY - modalPosition.y });
+  };
+
+  const handleMouseMove = (e) => {
+    if (isDragging) {
+      setModalPosition({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y,
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
   };
 
   const loginContainerStyle = {
@@ -114,7 +184,55 @@ function Login({ setIsLoggedIn, setUsername }) {
 
   const signupLinkStyle = {
     marginTop: '15px',
-    color: '#b3b3b3',
+    color: '#fff', // Màu trắng cho cả dòng
+  };
+
+  const forgotLinkStyle = {
+    color: '#fff', 
+    cursor: 'pointer',
+    textDecoration: 'underline',
+  };
+
+  const modalStyle = {
+    position: 'absolute',
+    top: modalPosition.y,
+    left: modalPosition.x,
+    width: '100vw',
+    height: '100vh',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+    backgroundColor: isDragging ? 'transparent' : 'rgba(255, 255, 255, 0,4)', // Nền trong suốt khi kéo
+  };
+
+  const modalContentStyle = {
+    backgroundColor: '#121212',
+    padding: '40px',
+    borderRadius: '10px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.5)',
+    width: '100%',
+    maxWidth: '400px',
+    textAlign: 'center',
+    color: '#fff',
+    position: 'relative',
+    cursor: isDragging ? 'grabbing' : 'grab',
+  };
+
+  const closeButtonStyle = {
+    position: 'absolute',
+    top: '10px',
+    right: '20px',
+    fontSize: '24px',
+    color: '#fff',
+    cursor: 'pointer',
+  };
+
+  const cancelButtonStyle = {
+    ...loginBtnStyle,
+    backgroundColor: '#666',
+    color: '#fff',
+    marginTop: '10px',
   };
 
   return (
@@ -145,13 +263,74 @@ function Login({ setIsLoggedIn, setUsername }) {
           </div>
           <button type="submit" style={loginBtnStyle}>{translations[language].login_button}</button>
         </form>
-        <p
-          style={signupLinkStyle}
-          dangerouslySetInnerHTML={{ __html: translations[language].signup_link + ' | ' + translations[language].forgot_password }}
-        />
+        <p style={signupLinkStyle}>
+          <span dangerouslySetInnerHTML={{ __html: translations[language].signup_link }} />
+          {' | '}
+          <span
+            style={forgotLinkStyle}
+            onClick={() => setShowForgotPassword(true)}
+          >
+            {translations[language].forgot_password}
+          </span>
+        </p>
       </div>
+
+      {showForgotPassword && (
+        <div style={modalStyle} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
+          <div style={modalContentStyle}>
+            <span style={closeButtonStyle} onClick={() => setShowForgotPassword(false)}>&times;</span>
+            <h2 style={{ marginBottom: '20px', fontSize: '24px' }}>
+              {showOtpForm ? translations[language].verify_otp_title : translations[language].forgot_password_title}
+            </h2>
+            {!showOtpForm ? (
+              <form onSubmit={handleForgotPassword}>
+                <div style={inputGroupStyle}>
+                  <input
+                    style={inputStyle}
+                    type="email"
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    placeholder={translations[language].email_placeholder}
+                    required
+                  />
+                </div>
+                <button type="submit" style={loginBtnStyle}>{translations[language].forgot_password_button}</button>
+            
+              </form>
+            ) : (
+              <form onSubmit={handleVerifyOtp}>
+                <div style={inputGroupStyle}>
+                  <input
+                    style={inputStyle}
+                    type="text"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    placeholder={translations[language].otp_placeholder}
+                    required
+                  />
+                </div>
+                <div style={inputGroupStyle}>
+                  <input
+                    style={inputStyle}
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder={translations[language].new_password_placeholder}
+                    required
+                  />
+                </div>
+                <button type="submit" style={loginBtnStyle}>{translations[language].verify_otp_button}</button>
+                <button type="button" style={cancelButtonStyle} onClick={() => setShowForgotPassword(false)}>
+                  Hủy
+                </button>
+              </form>
+            )}
+            {forgotMessage && <p style={{ marginTop: '15px', color: '#fff' }}>{forgotMessage}</p>}
+          </div>
+        </div>
+      )}
     </div>
   );
-};
+}
 
 export default Login;
